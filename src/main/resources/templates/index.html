@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎访问</title>
+    <style>
+        #xg{
+            width: 300px;
+            height: 150px;
+            background-color: white;
+            position: absolute;
+            left: 630px;
+            top: 30px;
+            display: none;
+            border: 1px solid crimson;
+            padding-left: 50px;
+        }
+        #tj{
+            width: 300px;
+            height: 150px;
+            background-color: white;
+            position: absolute;
+            left: 630px;
+            top: 30px;
+            display: none;
+            border: 1px solid crimson;
+            padding-left: 50px;
+        }
+        #ccc{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <a id="ttt">添加图书</a>
+    <a href="/book/getAllBook">查询全部图书</a>
+    <a href="/user/toLogin">登录</a>
+    <a href="/user/logout">退出</a>
+</div>
+<div>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        文件名：<input type="file" name="uploadFile">
+        <button type="submit">上传</button>
+    </form>
+</div>
+
+<table>
+    <tr id="ccc">
+        <td>序号</td>
+        <td>图书ID</td>
+        <td>图书名称</td>
+        <td>图书库存</td>
+        <td>图书价格</td>
+        <td>修改删除操作</td>
+    </tr>
+
+    <tr th:each="book,index:${bookList}">
+        <td th:text="${index.count}"></td>
+        <td th:text="${book.bookId}"></td>
+        <td th:text="${book.bookName}"></td>
+        <td th:text="${book.bookStore}"></td>
+        <td th:text="${book.bookPrice}"></td>
+        <td><button shiro:hasPermission="book:update" href="#" onclick="update(this)">修改</button></td>
+        <td><button shiro:hasPermission="book:del" href="#" onclick="del(this)">删除</button></td>
+    </tr>
+</table>
+<div id="tj">
+    <form method="post" action="/book/add">
+        书名:<input type="text" name="bookName"><br/>
+        库存:<input type="text" name="bookStore"><br/>
+        价格:<input type="text" name="bookPrice"><br/>
+        <button type="submit">提交</button>
+    </form>
+</div>
+
+<div id="xg">
+    <form method="post" action="/book/update">
+        编号:<input type="text" name="bookId"id="id"><br/>
+        书名:<input type="text" name="bookName" id="name"><br/>
+        库存:<input type="text" name="bookStore" id="store"><br/>
+        价格:<input type="text" name="bookPrice" id="price"><br/>
+        <button type="submit">提交</button>
+        <button id="notsureEdit">取消</button>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    $("#ttt").click(function () {
+        $("#tj").css("display","block");
+    })
+
+
+    function del(obj) {
+        var id = $(obj).parents("tr").children("td").eq(1).html();
+        $.ajax({
+            url:"del",
+            data:{
+                id:id
+            },
+            type:"post"
+        })
+    }
+
+    function update(obj) {
+        var id = $(obj).parents("tr").children("td").eq(1).html();
+        var name = $(obj).parents("tr").children("td").eq(2).html();
+        var store = $(obj).parents("tr").children("td").eq(3).html();
+        var price = $(obj).parents("tr").children("td").eq(4).html();
+        $("#xg").css("display","block");
+        $("#id").val(id);
+        $("#name").val(name);
+        $("#store").val(store);
+        $("#price").val(price);
+    }
+
+    $("#notsureEdit").click(function () {
+        $("#xg").css("display","none");
+    })
+</script>
+</body>
+</html>
